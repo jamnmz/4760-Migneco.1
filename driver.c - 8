@@ -1,0 +1,305 @@
+/*
+ *Jared Migneco
+ *Cmpsci 4760 Proj 1
+ *due 09-15-22
+ *
+ *Sources
+ *https://stackoverflow.com/questions/39047190/creating-a-queue-with-structs-in-c
+ *https://www.digitalocean.com/community/tutorials/queue-in-c
+ *https://stackoverflow.com/questions/29243013/queue-of-strings-in-c
+ *https://www.edureka.co/blog/queue-in-c/
+ *http://simplestcodings.blogspot.com/2010/10/simple-logger-in-c.html
+ *https://www.geeksforgeeks.org/readwrite-structure-file-c/
+ *
+ */
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <stdio.h>
+#include <stdarg.h>
+FILE *fp;
+
+
+typedef struct data_struct {
+        time_t time;
+        char   dataType;
+        char*  info;
+} data_t;
+
+//struct for queue
+//https://stackoverflow.com/questions/5902180/creating-a-queue-of-pointers-in-c
+struct Node
+{
+        int *k;
+        Node *Next;
+} * Temp;
+struct LS
+{
+        Node *first,*last;
+        void push(Node *MyNode)
+        {
+                MyNode->Next=NULL;
+                if(empty())
+                {
+                        first=MyNode;
+                        last=MyNode;
+                }
+                else
+                {
+                        last->Next = MyNode;
+                        last=MyNode;
+                }
+
+        }
+        Node* front()
+        {
+                return first;
+        }
+        void pop()
+        {
+                free(first->k);
+                first=first->Next;
+        }
+};
+
+
+//print time function from http://simplestcodings.blogspot.com/2010/10/simple-logger-in-c.html
+char* print_time()
+{
+        int size = 0;
+        char *buf;
+        t=time(NULL); /* get current calendar time */
+        char *timestr = asctime( localtime(&t) );
+        timestr[strlen(timestr) - 1] = 0;  //Getting rid of \n
+        size = strlen(timestr)+ 1 + 2; //Additional +2 for square braces
+        buf = (char*)malloc(size);
+        memset(buf, 0x0, size);
+        snprintf(buf,size,"[%s]", timestr);
+        return buf;
+}
+
+//addmsg function
+int addmsg(const char type, const char* msg)
+{
+        LS queue;
+        queue.first=NULL;
+
+        data_t *data = = malloc(sizeof(struct data_struct));
+        //initializing elements of data_t
+        data->time = print_time();
+        data->dataType = type;
+        strcpy(data->info, msg);
+
+        //switch statement handles file types
+        switch (type)
+        {
+                //for each case of corresponding types, a node is created for the data struct and placed in queue
+                case'i':
+                case'I':
+                        Node *NewNode= (Node*)malloc(sizeof(Node));
+                        NewNode->data = (int*)malloc(sizeof(int)*N);
+                        Q.push(NewNode);
+
+                        printf("DRIVER: CASE INFO: CHECKS OUT");
+                        return(0);
+                case'w':
+                case'W':
+                        Node *NewNode= (Node*)malloc(sizeof(Node));
+                        NewNode->data = (int*)malloc(sizeof(int)*N);
+                        Q.push(NewNode);
+
+                        printf("DRIVER: CASE WARNING: CHECKS OUT");
+                        return(0);
+                case'e':
+                case'E':
+                        Node *NewNode= (Node*)malloc(sizeof(Node));
+                        NewNode->data = (int*)malloc(sizeof(int)*N);
+                        Q.push(NewNode);
+
+                        printf("DRIVER: CASE ERROR: CHECKS OUT");
+                        return(0);;
+                case'f':
+                case'F':
+
+                        Node *NewNode= (Node*)malloc(sizeof(Node));
+                        NewNode->data = (int*)malloc(sizeof(int)*N);
+                        Q.push(NewNode);
+
+                        printf("DRIVER: CASE FATAL: program will terminate");
+                        exit(0);
+                default: /* '?' */
+                        printf ( "Invalid option %c\n", optopt );
+                        print_usage ( argv[0] );
+                        return (-1);
+
+        }
+        return -1;
+}
+
+//clearlog function
+//uses queue functions to clear log
+//modifies https://stackoverflow.com/questions/5902180/creating-a-queue-of-pointers-in-c
+void clearlog(void)
+{
+        //checks if queue is already empty
+        if(queue.empty)
+        {
+                printf("DRIVER: queue is already empty"):
+                exit(0);
+        }
+        else
+        {
+                /lopps until queue is cleared
+                while(!queue.empty)
+                {
+                        Temp=Q.front();
+                        Q.pop();
+                }
+        }
+}
+
+//getlog function
+char *getlog(void)
+{
+        char *fullLog = (char*)malloc(sizeof(queue));
+
+        return NULL;
+}
+
+//savelog function
+//modifies some of code from http://simplestcodings.blogspot.com/2010/10/simple-logger-in-c.html
+int savelog(char *filename)
+{
+        FILE *logput = *filename;
+        logput = fopen("log.txt", "w" );
+        //making sure file is successfully opened
+        if (logput == NULL)
+        {
+                perror();
+                return(-1);
+        }
+        //writing to file
+        fwrite(&data_t, sizeof(struct data_t), 1, logput);
+
+        fclose(filename);
+        return 0;
+}
+
+//usage statement
+void print_usage ( const char * app )
+{
+        printf (stderr, "usage: %s [-h] [-t time] [logfile]\n", app);
+}
+
+//Main function
+int main(int argc, char *argv[])
+{
+        //initializing bot relevant time variables before switch to set defaults if needed
+        int sec = 0;
+        int t,addx, savex = 0;
+        FILE *file;
+        char *theGreatLog;
+
+
+        const char optstr[] = "h:t:logfile:";
+        char opt;
+        while ( ( opt = getopt ( argc, argv, optstr ) ) != -1 )
+        {
+                switch ( opt )
+                {
+                        case 'h':
+                                print_usage ( argv[0] );
+                                return ( EXIT_SUCCESS );
+                        case 't':
+                                sec = atoi ( optarg );
+
+                                //generates value for random time between 0 and user-supplied t value
+                                t = 2 * (rand() % (sec + 1));
+                                break;
+                        default: /* '?' */
+                                printf ( "Invalid option %c\n", optopt );
+                                print_usage ( argv[0] );
+                                return ( EXIT_FAILURE );
+                }
+
+                //sets default range for random time value if no user input given
+                if (sec == 0)
+                {
+                        t = (rand() % 2);
+                }
+
+                //prompts user for input
+                fprintf("Please decide what to do with log\n");
+                fprintf("\t1: Add message\n");
+                fprintf("\t2: Clear log\n");
+                fprintf("\t3: Get log\n");
+                fprintf("\t4: Save log\n");
+                fprintf("\t5: End program\n");
+
+                //switch statement makes function corresponsding to user input occur
+                switch(opt)
+                {
+                        //add message function, terminates if unsuccessful
+                        case '1':
+                                addx = addmsg();
+                                if(addx == 0)
+                                {
+                                        fprintf("Successfully added message\n");
+                                }
+                                else
+                                {
+                                        perror("DRIVER: ERROR: addmsg failed");
+                                        exit(EXIT_FAILURE);
+                                }
+                                break;
+
+                        //clearlog function
+                        case '2':
+                                clearlog;
+                                fprintf("DRIVER: Theoretically nothing broke...\n");
+                                break;
+
+                        //get log function, terminates if unsuccessful
+                        case '3':
+                                strcpy(getlog(), theGreatLog);
+                                if(theGreatLog != NULL)
+                                {
+                                        fprintf("Successfully got the log\n");
+                                }
+                                else
+                                {
+                                        perror("DRIVER: ERROR: addmsg failed");
+                                        exit(EXIT_FAILURE);
+
+                                }
+                                break;
+
+                        //savelog function, terminates if unsuccessful
+                        case '4':
+                                savex = savelog(file);
+                                if(savex == 0)
+                                {
+                                        fprintf("Successfully saved\n");
+                                }
+                                else
+                                {
+                                        perror("DRIVER: ERROR: savelog failed");
+                                        exit(EXIT_FAILURE);
+                                }
+                                break;
+                        //program kills itself
+                        case '5':
+                                fprintf("Ending");
+                                exit(EXIT_SUCCESS);
+                        default:
+                                printf ( "Invalid option %c\n", optopt );
+                                print_usage ( argv[0] );
+                                return ( EXIT_FAILURE );
+
+                }
+                //random waiting between input
+                wait(t);
+
+        }
+        return 0;
+}
